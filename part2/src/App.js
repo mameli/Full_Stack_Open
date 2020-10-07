@@ -1,55 +1,86 @@
 import React, { useState } from 'react'
-import Note from './components/Note'
 
-const App = (props) => {
-  const [notes, setNotes] = useState(props.notes)
-  const [newNote, setNewNote] = useState('a new note...') 
-  const [showAll, setShowAll] = useState(true)
+const Person = ({ person }) => {
+  return (
+    <li>{person.name} {person.number}</li>
+  )
+}
 
-  const addNote = (event) => {
-    event.preventDefault()
-    const noteObject = {
-      content: newNote,
-      date: new Date().toISOString(),
-      important: Math.random() < 0.5,
-      id: notes.length + 1,
-    }
+const App = () => {
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
+  ])
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [nameFilter, setNameFilter] = useState('')
   
-    setNotes(notes.concat(noteObject))
-    setNewNote('')
+  const checkDuplicates = (name) => {
+    const filteredList = persons.filter(p => p.name === newName)
+    if (filteredList.length > 0) {
+      return true
+    }
+    return false
   }
 
-  const handleNoteChange = (event) => {
-    console.log(event.target.value)
-    setNewNote(event.target.value)
+  const addName = (event) => {
+    event.preventDefault()
+    const person = {
+      name: newName,
+      number: newNumber
+    }
+    if (!checkDuplicates(newName)) {
+      setPersons(persons.concat(person))
+    } else {
+      window.alert(`${newName} is already added to phonebook`)
+    }
+    setNewName('')
+    setNewNumber('')
   }
 
-  const notesToShow = showAll
-    ? notes
-    : notes.filter(note => note.important === true)
+  const handleNewName = (event) => {
+    setNewName(event.target.value)
+  }
+
+  const handleNewNumber = (event) => {
+    setNewNumber(event.target.value)
+  }
+
+  const handleNameFilter = (event) => {
+    setNameFilter(event.target.value)
+  }
 
   return (
     <div>
-      <h1>Notes</h1>
-      <div>
-        <button onClick={() => setShowAll(!showAll)}>
-          show {showAll ? 'important' : 'all' }
-        </button>
-      </div>
+      <h2>Phonebook</h2>
+      <form>
+        <div>
+          filter shown with <input value={nameFilter} onChange={handleNameFilter}/>
+        </div>
+      </form>
+      <h2>Add New</h2>
+      <form onSubmit={addName}>
+        <div>
+          name: <input value={newName} onChange={handleNewName} />
+        </div>
+        <div>
+          number: <input value={newNumber} onChange={handleNewNumber}/>
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+      <h2>Numbers</h2>
       <ul>
-        {notesToShow.map(note =>
-          <Note key={note.id} note={note} />
+        {persons.filter(p => p.name.toLowerCase().includes(nameFilter))
+                .map(p =>
+                <Person key={p.name} person={p} />
         )}
       </ul>
-      <form onSubmit={addNote}>
-        <input 
-          value={newNote} 
-          onChange={handleNoteChange}
-        />
-        <button type="submit">save</button>
-      </form>   
     </div>
   )
 }
 
-export default App 
+export default App
