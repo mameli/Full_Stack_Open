@@ -10,4 +10,7 @@ RUN npm install
 
 COPY . ./
 
+# Replace with http://api.weatherstack.com/ API KEY
+ENV REACT_APP_API_KEY = 'API KEY'
+
 CMD ["npm", "start"]
