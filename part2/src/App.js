@@ -1,39 +1,89 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import CountryList from './components/CountryList'
+import Note from './components/Note'
+import noteService from './services/notes'
 
+const App = (props) => {
+  const [notes, setNotes] = useState([])
+  const [newNote, setNewNote] = useState('a new note...')
+  const [showAll, setShowAll] = useState(true)
 
-const App = () => {
-  const [Countries, setCountries] = useState([])
-  const [nameFilter, setNameFilter] = useState('')
+  const addNote = (event) => {
+    event.preventDefault()
+    const noteObject = {
+      content: newNote,
+      date: new Date().toISOString(),
+      important: Math.random() < 0.5,
+      id: notes.length + 1,
+    }
 
-
-  const handleNameFilter = (event) => {
-    setNameFilter(event.target.value)
-  }
-
-  const hook = () => {
-    axios
-      .get('https://restcountries.eu/rest/v2/all')
+    noteService
+      .create(noteObject)
       .then(response => {
-        setCountries(response.data)
+        setNotes(notes.concat(response.data))
+        setNewNote('')
       })
   }
 
-  useEffect(hook, [])
+  const toggleImportanceOf = id => {
+    const note = notes.find(n => n.id === id)
+    const changedNote = { ...note, important: !note.important }
+
+    noteService
+      .update(id, changedNote)
+      .then(response => {
+        setNotes(notes.map(note => note.id !== id ? note : response.data))
+      })
+      .catch(error => {
+        alert(
+          `the note '${note.content}' was already deleted from server`
+        )
+        setNotes(notes.filter(n => n.id !== id))
+      })
+  }
+
+  const handleNoteChange = (event) => {
+    console.log(event.target.value)
+    setNewNote(event.target.value)
+  }
+
+  const notesToShow = showAll
+    ? notes
+    : notes.filter(note => note.important === true)
+
+  useEffect(() => {
+    noteService
+      .getAll()
+      .then(response => {
+        setNotes(response.data)
+      })
+  }, [])
+
+  console.log('render', notes.length, 'notes')
 
   return (
     <div>
-      <h2>Countries</h2>
-      <form>
-        <div>
-          filter contries <input value={nameFilter} onChange={handleNameFilter} />
-        </div>
+      <h1>Notes</h1>
+      <div>
+        <button onClick={() => setShowAll(!showAll)}>
+          show {showAll ? 'important' : 'all'}
+        </button>
+      </div>
+      <ul>
+        {notesToShow.map(note =>
+          <Note key={note.id}
+            note={note}
+            toggleImportance={() => toggleImportanceOf(note.id)} />
+        )}
+      </ul>
+      <form onSubmit={addNote}>
+        <input
+          value={newNote}
+          onChange={handleNoteChange}
+        />
+        <button type="submit">save</button>
       </form>
-      <p />
-      <CountryList Countries={Countries} nameFilter={nameFilter} />
     </div>
   )
 }
 
-export default App
+export default App 
