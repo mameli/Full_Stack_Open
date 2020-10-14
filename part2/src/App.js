@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Person from './components/Person'
+import Notification from './components/Notification'
 import personService from './services/persons'
 
 const App = () => {
@@ -7,6 +8,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [modeAlert, setModeAlert] = useState('error')
 
   const checkDuplicates = (newName) => {
     const filteredList = persons.filter(p => p.name === newName)
@@ -27,6 +30,13 @@ const App = () => {
       personService.create(newPerson)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
+          setModeAlert('alert')
+          setNotificationMessage(
+            `${returnedPerson.name} was added`
+          )
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 5000)
         })
     } else {
       if (window.confirm(`${newName} is already added to phonebook. Do you want to update the number?`)){
@@ -62,9 +72,13 @@ const App = () => {
           setPersons(persons.filter(p => p.id !== id))
         })
         .catch(error => {
-          console.log(
-            `Failed to remove item from the server. ${error}`
-          );
+          setModeAlert('error')
+          setNotificationMessage(
+            `Person '${id}' was already removed from server`
+          )
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 5000)
         })
     }
   }
@@ -81,6 +95,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} mode={modeAlert}/>
       <form>
         <div>
           filter shown with <input value={nameFilter} onChange={handleNameFilter} />
