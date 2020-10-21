@@ -53,8 +53,6 @@ const App = () => {
   }
 
   const delPerson = id => {
-    console.log("dell trigger")
-    console.log(id)
 
     if (window.confirm(`Do you really want to delete?`)) {
       personService.del(id)
