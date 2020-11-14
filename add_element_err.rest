@@ -1,6 +1,6 @@
-POST http://localhost:3001/api/persons
+POST http://localhost:3001/api/notes
 Content-Type: application/json
 
 {
-    "name": "Filippo Mameli"
+    "important": false
 }
