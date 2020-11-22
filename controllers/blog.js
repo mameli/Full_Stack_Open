@@ -24,15 +24,33 @@ blogsRouter.get('/:id', (request, response, next) => {
 
 blogsRouter.delete('/:id', (request, response, next) => {
 	Blog
-		.findByIdAndRemoved(request.params.id)
+		.findByIdAndRemove(request.params.id)
 		.then(() => {
 			response.status(204).end()
 		})
 		.catch(error => next(error))
 })
 
+blogsRouter.put('/:id', (request, response, next) => {
+
+	const body = request.body
+
+	const blog = {
+		title: body.title,
+		author: body.author,
+		url: body.url,
+		likes: body.likes
+	}
+
+	Blog
+		.findByIdAndUpdate(request.params.id, blog, { new: true })
+		.then(result => {
+			response.status(200).json(result)
+		})
+		.catch(error => next(error))
+})
+
 blogsRouter.post('/', (request, response, next) => {
-	const req = request.body
 	const blog = new Blog(request.body)
 
 	blog
