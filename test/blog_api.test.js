@@ -131,7 +131,7 @@ test('delete blog', async () => {
 
 	await api
 		.delete(`/api/blogs/${idBlog}`)
-		.expect(204)
+		.expect(200)
 })
 
 afterAll(() => {
