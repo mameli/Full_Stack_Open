@@ -32,6 +32,7 @@ blogsRouter.delete('/:id', (request, response, next) => {
 })
 
 blogsRouter.post('/', (request, response, next) => {
+	const req = request.body
 	const blog = new Blog(request.body)
 
 	blog
