@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hbWUiLCJpZCI6IjVmYzJlOGNmYzA1NGRmMjU1ZGE3YTEzZiIsImlhdCI6MTYwNjYwOTMwNH0.HfRL8a-ND7RMLIURyVlNnSxyLIUGV__Knb8geS_zMH0
+
+{
+    "title": "my token blog",
+    "author": "Filippo Mameli",
+    "url": "www.blog3.it",
+    "likes": 102
+}
