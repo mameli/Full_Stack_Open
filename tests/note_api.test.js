@@ -6,6 +6,11 @@ const api = supertest(app)
 
 const Note = require('../models/note')
 
+const user_pass = {
+	username: 'mame',
+	password: 'asdfasdf'
+}
+
 beforeEach(async () => {
 	await Note.deleteMany({})
 
@@ -82,8 +87,13 @@ describe('addition of a new note', () => {
 			important: true,
 		}
 
+		const token = await api
+			.post('/api/login')
+			.send(user_pass)
+
 		await api
 			.post('/api/notes')
+			.set('Authorization', `bearer ${token.body.token}`)
 			.send(newNote)
 			.expect(200)
 			.expect('Content-Type', /application\/json/)
@@ -103,8 +113,13 @@ describe('addition of a new note', () => {
 			important: true
 		}
 
+		const token = await api
+			.post('/api/login')
+			.send(user_pass)
+
 		await api
 			.post('/api/notes')
+			.set('Authorization', `bearer ${token.body.token}`)
 			.send(newNote)
 			.expect(400)
 

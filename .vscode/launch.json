@@ -10,6 +10,12 @@
         "request": "launch",
         "type": "node-terminal"
     },
+    {
+        "command": "npm test -- -t 'succeeds with valid data'",
+        "name": "Run npm test succeeds with valid data",
+        "request": "launch",
+        "type": "node-terminal"
+    },
         {
             "type": "node",
             "request": "launch",
