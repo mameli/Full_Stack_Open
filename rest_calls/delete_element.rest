@@ -1,1 +1,2 @@
-DELETE http://localhost:3001/api/blogs/5fbace739125cf28c265fa2f
+DELETE http://localhost:3001/api/blogs/5fc3fb9857819e074430347e
+Authorization: bearer invalidToken

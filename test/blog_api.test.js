@@ -5,6 +5,7 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const initialBlogs = [
 	{
 		title: 'my first blog',
@@ -19,6 +20,19 @@ const initialBlogs = [
 		likes: 102
 	},
 ]
+
+const user_pass = {
+	username: 'mame',
+	password: 'asdfasdf'
+}
+
+beforeAll(async () => {
+	await User.deleteMany({})
+	await api
+		.post('/api/users')
+		.send(user_pass)
+		.expect(200)
+})
 
 beforeEach(async () => {
 	await Blog.deleteMany({})
@@ -64,8 +78,13 @@ test('blog is added to the list', async () => {
 		likes: 111
 	}
 
+	const token = await api
+		.post('/api/login')
+		.send(user_pass)
+
 	await api
 		.post('/api/blogs')
+		.set('Authorization', `bearer ${token.body.token}`)
 		.send(newBlog)
 		.expect(201)
 		.expect('Content-Type', /application\/json/)
@@ -86,8 +105,13 @@ test('blog added without likes', async () => {
 		url: 'www.blog0Likes.it',
 	}
 
+	const token = await api
+		.post('/api/login')
+		.send(user_pass)
+
 	await api
 		.post('/api/blogs')
+		.set('Authorization', `bearer ${token.body.token}`)
 		.send(newBlog)
 		.expect(201)
 		.expect('Content-Type', /application\/json/)
@@ -104,8 +128,13 @@ test('blog without required fields', async () => {
 		author: 'Filippo Mameli',
 	}
 
+	const token = await api
+		.post('/api/login')
+		.send(user_pass)
+
 	await api
 		.post('/api/blogs')
+		.set('Authorization', `bearer ${token.body.token}`)
 		.send(newBlog)
 		.expect(400)
 })
@@ -117,8 +146,13 @@ test('delete blog', async () => {
 		url: 'www.blogToDelete.it',
 	}
 
+	const token = await api
+		.post('/api/login')
+		.send(user_pass)
+
 	await api
 		.post('/api/blogs')
+		.set('Authorization', `bearer ${token.body.token}`)
 		.send(newBlog)
 		.expect(201)
 		.expect('Content-Type', /application\/json/)
@@ -130,7 +164,76 @@ test('delete blog', async () => {
 
 	await api
 		.delete(`/api/blogs/${idBlog}`)
+		.set('Authorization', `bearer ${token.body.token}`)
 		.expect(200)
+})
+
+test('delete blog unauthorized user', async () => {
+	const newBlog = {
+		title: 'my blog to delete',
+		author: 'Filippo Mameli',
+		url: 'www.blogToDelete.it',
+	}
+
+	var token = await api
+		.post('/api/login')
+		.send(user_pass)
+
+	await api
+		.post('/api/blogs')
+		.set('Authorization', `bearer ${token.body.token}`)
+		.send(newBlog)
+		.expect(201)
+		.expect('Content-Type', /application\/json/)
+
+	const response = await api.get('/api/blogs')
+
+	const blog = response.body.filter(b => b.title === 'my blog to delete')[0]
+	const idBlog = blog.id
+
+	const unauthorized_user = {
+		username: 'unauthorized_user',
+		password: 'asdfasdf'
+	}
+
+	await api
+		.post('/api/users')
+		.send(unauthorized_user)
+		.expect(200)
+
+	token = await api
+		.post('/api/login')
+		.send(unauthorized_user)
+
+	await api
+		.delete(`/api/blogs/${idBlog}`)
+		.set('Authorization', `bearer ${token.body.token}`)
+		.expect(401)
+})
+
+test('blog user password length', async () => {
+	const newUser = {
+		username: 'shortPass',
+		name: 'Filippo',
+		password: 'asd'
+	}
+
+	await api
+		.post('/api/users')
+		.send(newUser)
+		.expect(400)
+})
+
+test('blog user no username', async () => {
+	const newUser = {
+		name: 'Filippo Mameli',
+		password: 'asdfasdf'
+	}
+
+	await api
+		.post('/api/users')
+		.send(newUser)
+		.expect(400)
 })
 
 afterAll(() => {
