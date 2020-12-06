@@ -6,15 +6,11 @@ import Footer from "./components/Footer";
 import Togglable from "./components/Togglable";
 import Notification from "./components/Notification";
 import noteService from "./services/notes";
-import loginService from "./services/login";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState("");
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -32,19 +28,21 @@ const App = () => {
     }
   }, []);
 
-  const addNote = (event) => {
-    event.preventDefault();
-    const noteObject = {
-      content: newNote,
-      date: new Date().toISOString(),
-      important: Math.random() > 0.5,
-      id: notes.length + 1,
-    };
-
+  const addNote = (noteObject) => {
     noteService.create(noteObject).then((returnedNote) => {
       setNotes(notes.concat(returnedNote));
-      setNewNote("");
     });
+  };
+
+  const getLoginUser = (returnedUser) => {
+    setUser(returnedUser);
+  };
+
+  const getLoginMessage = (message) => {
+    setErrorMessage(message);
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 5000);
   };
 
   const toggleImportanceOf = (id) => {
@@ -66,54 +64,15 @@ const App = () => {
       });
   };
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-
-    try {
-      const user = await loginService.login({
-        username,
-        password,
-      });
-
-      window.localStorage.setItem("loggedNoteappUser", JSON.stringify(user));
-
-      noteService.setToken(user.token);
-      setUser(user);
-      setUsername("");
-      setPassword("");
-    } catch (exception) {
-      setErrorMessage("wrong credentials");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
-    }
-
-    console.log("logging in with", username, password);
-  };
-
-  const handleNoteChange = (event) => {
-    setNewNote(event.target.value);
-  };
-
   const loginForm = () => (
     <Togglable buttonLabel="login">
-      <LoginForm
-        username={username}
-        password={password}
-        handleUsernameChange={({ target }) => setUsername(target.value)}
-        handlePasswordChange={({ target }) => setPassword(target.value)}
-        handleSubmit={handleLogin}
-      />
+      <LoginForm loginUser={getLoginUser} loginMessage={getLoginMessage} />
     </Togglable>
   );
 
   const noteForm = () => (
     <Togglable buttonLabel="new note">
-      <NoteForm
-        onSubmit={addNote}
-        value={newNote}
-        handleChange={handleNoteChange}
-      />
+      <NoteForm createNote={addNote} />
     </Togglable>
   );
 
