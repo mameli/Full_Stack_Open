@@ -12,7 +12,7 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService.getAll().then((blogs) => { setBlogs(blogs.sort(sortByLikes)); });
   }, []);
 
   useEffect(() => {
@@ -23,6 +23,10 @@ const App = () => {
       blogService.setToken(user.token);
     }
   }, []);
+
+  const sortByLikes = (a, b) => {
+    return b.likes - a.likes
+  }
 
   const getBlogFormMessage = (message) => {
     setErrorMessage(message);

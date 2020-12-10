@@ -18,10 +18,17 @@ const Blog = ({ blog, updateBlogs }) => {
       author: blog.author,
       url: blog.url,
       likes: blog.likes + 1,
-      user: blog.user,
+      user: blog.user.id,
     };
     await blogService.update(blog.id, updatedBlog);
     blogService.getAll().then((blogs) => updateBlogs(blogs));
+  };
+
+  const handleBlogDelete = async () => {
+    if (window.confirm(`Do you really want to delete "${}"?`)) {
+      await blogService.deleteBlog(blog.id);
+      blogService.getAll().then((blogs) => updateBlogs(blogs));
+    }
   };
 
   if (isHidden) {
@@ -48,6 +55,7 @@ const Blog = ({ blog, updateBlogs }) => {
           {blog.likes}
           <button onClick={() => handleLikeUpdate()}>like</button>
         </p>
+        <button onClick={() => handleBlogDelete()}>remove</button>
       </div>
     );
   }
