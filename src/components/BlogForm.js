@@ -1,27 +1,27 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
 
 const BlogForm = ({ createBlog, setMessage }) => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   const addBlog = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     try {
       const newBlog = {
         title: title,
         author: author,
         url: url,
-      };
-      createBlog(newBlog);
-      setTitle("");
-      setAuthor("");
-      setUrl("");
+      }
+      createBlog(newBlog)
+      setTitle('')
+      setAuthor('')
+      setUrl('')
     } catch (exception) {
-      setMessage("Error creating blog");
+      setMessage('Error creating blog')
     }
-  };
+  }
 
   return (
     <div>
@@ -54,7 +54,7 @@ const BlogForm = ({ createBlog, setMessage }) => {
         <button type="submit">create</button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default BlogForm;
+export default BlogForm

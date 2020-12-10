@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import blogService from "../services/blogs";
+import React, { useState } from 'react'
+import blogService from '../services/blogs'
 
 const Blog = ({ blog, updateBlogs }) => {
-  const [isHidden, setHidden] = useState(true);
+  const [isHidden, setHidden] = useState(true)
 
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: "solid",
+    border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
-  };
+  }
 
   const handleLikeUpdate = async () => {
     const updatedBlog = {
@@ -19,34 +19,34 @@ const Blog = ({ blog, updateBlogs }) => {
       url: blog.url,
       likes: blog.likes + 1,
       user: blog.user.id,
-    };
-    await blogService.update(blog.id, updatedBlog);
-    blogService.getAll().then((blogs) => updateBlogs(blogs));
-  };
+    }
+    await blogService.update(blog.id, updatedBlog)
+    blogService.getAll().then((blogs) => updateBlogs(blogs))
+  }
 
   const handleBlogDelete = async () => {
-    if (window.confirm(`Do you really want to delete "${}"?`)) {
-      await blogService.deleteBlog(blog.id);
-      blogService.getAll().then((blogs) => updateBlogs(blogs));
+    if (window.confirm(`Do you really want to delete ${blog.title}?`)) {
+      await blogService.deleteBlog(blog.id)
+      blogService.getAll().then((blogs) => updateBlogs(blogs))
     }
-  };
+  }
 
   if (isHidden) {
     return (
       <div>
         {blog.title} {blog.author}
         <button onClick={() => setHidden(!isHidden)}>
-          {isHidden ? "view" : "hide"}
+          {isHidden ? 'view' : 'hide'}
         </button>
       </div>
-    );
+    )
   } else {
     return (
       <div style={blogStyle}>
         <h3>
-          {blog.title}{" "}
+          {blog.title}{' '}
           <button onClick={() => setHidden(!isHidden)}>
-            {isHidden ? "view" : "hide"}
+            {isHidden ? 'view' : 'hide'}
           </button>
         </h3>
         <p>{blog.author}</p>
@@ -57,8 +57,8 @@ const Blog = ({ blog, updateBlogs }) => {
         </p>
         <button onClick={() => handleBlogDelete()}>remove</button>
       </div>
-    );
+    )
   }
-};
+}
 
-export default Blog;
+export default Blog
