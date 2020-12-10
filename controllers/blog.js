@@ -3,7 +3,7 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
-const getTokenFrom = request => {
+const getTokenFrom = (request) => {
 	const authorization = request.get('authorization')
 	if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
 		return authorization.substring(7)
@@ -13,7 +13,8 @@ const getTokenFrom = request => {
 
 blogsRouter.get('/', async (request, response) => {
 	const blogs = await Blog.find({})
-		.find({}).populate('user', { username: 1, name: 1 })
+		.find({})
+		.populate('user', { username: 1, name: 1 })
 	response.json(blogs)
 })
 
@@ -46,17 +47,19 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.put('/:id', async (request, response) => {
-
 	const body = request.body
 
 	const blog = {
 		title: body.title,
 		author: body.author,
 		url: body.url,
-		likes: body.likes
+		likes: body.likes,
+		user: body.user,
 	}
 
-	const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+	const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
+		new: true,
+	})
 	response.status(200).json(updatedBlog)
 })
 
@@ -69,9 +72,9 @@ blogsRouter.delete('/:id', async (request, response) => {
 	const user = await User.findById(decodedToken.id)
 	const blog = await Blog.findById(request.params.id)
 
-	if ( blog.user.toString() === user._id.toString() ){
+	if (blog.user.toString() === user._id.toString()) {
 		await Blog.findByIdAndRemove(request.params.id)
-	}else{
+	} else {
 		return response.status(401).json({ error: 'unauthorized user' })
 	}
 	response.status(200).end()
