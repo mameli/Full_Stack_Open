@@ -1,9 +1,0 @@
-PUT http://localhost:3001/api/blogs/5fbac6c6554d16258d3ae651
-Content-Type: application/json
-
-{
-    "title": "my second blog",
-    "author": "Filippo Mameli",
-    "url": "www.blog3.it",
-    "likes": 2222
-}
