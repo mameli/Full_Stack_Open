@@ -1,47 +1,35 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-import { createStore } from 'redux'
-import noteReducer from './reducers/noteReducer'
-
-const store = createStore(noteReducer)
-
-store.dispatch({
-  type: 'NEW_NOTE',
-  data: {
-    content: 'the app state is in redux store',
-    important: true,
-    id: 1
-  }
-})
-
-store.dispatch({
-  type: 'NEW_NOTE',
-  data: {
-    content: 'state changes are made with actions',
-    important: false,
-    id: 2
-  }
-})
+import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
-  return(
+  const anecdotes = useSelector(state => state)
+  const dispatch = useDispatch()
+
+  const vote = (id) => {
+    console.log('vote', id)
+  }
+
+  return (
     <div>
-      <ul>
-        {store.getState().map(note=>
-          <li key={note.id}>
-            {note.content} <strong>{note.important ? 'important' : ''}</strong>
-          </li>
-        )}
-        </ul>
+      <h2>Anecdotes</h2>
+      {anecdotes.map(anecdote =>
+        <div key={anecdote.id}>
+          <div>
+            {anecdote.content}
+          </div>
+          <div>
+            has {anecdote.votes}
+            <button onClick={() => vote(anecdote.id)}>vote</button>
+          </div>
+        </div>
+      )}
+      <h2>create new</h2>
+      <form>
+        <div><input /></div>
+        <button>create</button>
+      </form>
     </div>
   )
 }
 
-const renderApp = () => {
-  ReactDOM.render(<App />, document.getElementById('root'))
-}
-
-renderApp()
-store.subscribe(renderApp)
-
-export default App;
+export default App
