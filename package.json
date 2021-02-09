@@ -1,34 +1,5 @@
 {
-  "name": "part3",
-  "version": "0.0.1",
-  "description": "Part 3 module of full stack open",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \\\"Error: no test specified\\\" && exit 1",
-    "lint": "eslint ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mameli/Full_Stack_Open.git"
-  },
-  "author": "Filippo Mameli",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mameli/Full_Stack_Open/issues"
-  },
-  "homepage": "https://github.com/mameli/Full_Stack_Open#readme",
-  "devDependencies": {
-    "eslint": "^7.13.0",
-    "nodemon": "^2.0.5"
-  },
   "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "mongoose": "^5.10.9",
-    "mongoose-unique-validator": "^2.0.3",
-    "morgan": "^1.10.0"
+    "react-router-dom": "^5.2.0"
   }
 }
